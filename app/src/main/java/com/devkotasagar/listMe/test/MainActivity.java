@@ -2,6 +2,7 @@ package com.devkotasagar.listMe.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     View noDataView;
     View loadingIndicator;
 
-
+    private final String USER_URL = "https://jsonplaceholder.typicode.com/users/"; //API endpoint to get users
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 users.add(aUser);
             }
 
-            UpdateUI(users);
+            updateUI(users);
         } catch (Exception e) {
             Log.e("MAIN", "displayFromDB()\n"+ e);
             Toast aToast = Toast.makeText(context,"Something Went Wrong :(",Toast.LENGTH_LONG);
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void UpdateUI(ArrayList<User> users){
+    void updateUI(ArrayList<User> users){
         UserListAdapter adapter = new UserListAdapter(this, users);
 
         loadingIndicator.setVisibility(View.GONE);
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
             if (networkInfo != null && networkInfo.isConnected()) {
                 loadingIndicator.setVisibility(View.VISIBLE);
                 noDataView.setVisibility(View.GONE);
-                //TODO Create and execute a async task to save from json data
+                UserAsyncTask task = new UserAsyncTask(USER_URL);
+                task.execute();
             } else {
                 Toast aToast = Toast.makeText(this,"Internet Connection Required",Toast.LENGTH_LONG);
                 aToast.show();
@@ -125,5 +127,147 @@ public class MainActivity extends AppCompatActivity {
         saveToDB();
     }
 
+    private class UserAsyncTask extends AsyncTask<URL, Void, ArrayList<User>> {
+        String urlToFetch;
 
+        UserAsyncTask(String urlToFetch) {
+            this.urlToFetch = urlToFetch;
+        }
+
+        @Override
+        protected ArrayList<User> doInBackground(URL... urls) {
+            URL url = createUrl(urlToFetch);
+
+            String jsonResponse = null;
+            try {
+                jsonResponse = makeHttpRequest(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            ArrayList<User> users = makeUsersFromJson(jsonResponse);
+
+            return users;
+        }
+
+        private URL createUrl(String stringUrl) {
+            URL url;
+            try {
+                url = new URL(stringUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+            return url;
+        }
+
+        private String makeHttpRequest(URL url) throws IOException {
+            String jsonResponce = "";
+            HttpURLConnection httpURLConnection = null;
+            InputStream inputStream = null;
+            try {
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.setConnectTimeout(1000);
+                httpURLConnection.setReadTimeout(1500);
+                httpURLConnection.connect();
+                inputStream = httpURLConnection.getInputStream();
+                jsonResponce = readFromStream(inputStream);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+            return jsonResponce;
+        }
+
+        private String readFromStream(InputStream inputStream) throws IOException {
+            StringBuilder jsonResponce = new StringBuilder();
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String line = bufferedReader.readLine();
+                while (line != null) {
+                    jsonResponce.append(line);
+                    line = bufferedReader.readLine();
+                }
+            }
+
+            return jsonResponce.toString();
+        }
+
+        public ArrayList<User> makeUsersFromJson(String jsonString) {
+
+            System.out.println(jsonString);
+
+            ArrayList<User> users = new ArrayList<>();
+            try {
+                JSONArray jsonUsers =  new JSONArray(jsonString);
+                int i;
+                for(i=0; i < (jsonUsers.length());i++) {
+                    JSONObject aJSONUser = jsonUsers.getJSONObject(i);
+                    int id = aJSONUser.getInt("id");
+                    String name = aJSONUser.getString("name");
+                    String phone = aJSONUser.getString("phone");
+                    String email = aJSONUser.getString("email");
+
+                    JSONObject jsonAddress = aJSONUser.getJSONObject("address");
+                    String street = jsonAddress.getString("street");
+                    String zip = jsonAddress.getString("zipcode");
+
+                    User aUser = new User(name,id,email,phone,street,zip);
+                    users.add(aUser);
+                }
+
+            } catch (JSONException e) {
+                Log.e("UserAsyncTask", "makeUsersFromJson \n" + e);
+                //handel
+            }
+            return users;
+        }
+
+        @Override
+        protected  void onPostExecute(ArrayList<User> users){
+            updateUI(users);
+            insertIntoDB(users);
+        }
+    }
+
+    public void insertIntoDB(ArrayList<User> users){
+
+        //It would also be better if this function is also executed in async task
+
+        ListMeDBHelper listMeDBHelper = new ListMeDBHelper(context);
+        SQLiteDatabase database = listMeDBHelper.getWritableDatabase();
+
+        //Here we first clear all the database and insert new ones [when added referesh button].
+        database.execSQL("DELETE from "+ ListContract.UserEntry.TABLE_NAME);
+
+        ContentValues values = new ContentValues();
+
+        for(User user:users){
+            String name = user.getName();
+            String email = user.getEmail();
+            int id = user.getId();
+            String phone = user.getPhone();
+            String street = user.getStreet();
+            String zip = user.getZip();
+
+            values.put(ListContract.UserEntry.COLUMN_NAME, name);
+            values.put(ListContract.UserEntry.COLUMN_EMAIL, email);
+            values.put(ListContract.UserEntry.COLUMN_USER_IDD, id); //in DB idd is for Id from API
+            values.put(ListContract.UserEntry.COLUMN_phone, phone);
+            values.put(ListContract.UserEntry.COLUMN_ADDRESS_STREET, street);
+            values.put(ListContract.UserEntry.COLUMN_ADDRESS_ZIP, zip);
+
+            database.insert(ListContract.UserEntry.TABLE_NAME,null,values);
+        }
+        displayFromDb();
+    }
 }

@@ -31,16 +31,16 @@ public class ListMeDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
 
         //TestForDisplayingUsers
-        sqLiteDatabase.execSQL("INSERT INTO "+ UserEntry.TABLE_NAME + "(" +
-                    UserEntry.COLUMN_USER_IDD + "," +
-                    UserEntry.COLUMN_NAME+ "," +
-                    UserEntry.COLUMN_EMAIL+ ", " +
-                    UserEntry.COLUMN_phone + ", " +
-                    UserEntry.COLUMN_ADDRESS_STREET+ ", " +
-                    UserEntry.COLUMN_ADDRESS_ZIP +
-                ") VALUES(" +
-                + 0+", "+
-                "'Test', 'test@test.test', '987654321', 'Testara', '0123T')");
+//        sqLiteDatabase.execSQL("INSERT INTO "+ UserEntry.TABLE_NAME + "(" +
+//                    UserEntry.COLUMN_USER_IDD + "," +
+//                    UserEntry.COLUMN_NAME+ "," +
+//                    UserEntry.COLUMN_EMAIL+ ", " +
+//                    UserEntry.COLUMN_phone + ", " +
+//                    UserEntry.COLUMN_ADDRESS_STREET+ ", " +
+//                    UserEntry.COLUMN_ADDRESS_ZIP +
+//                ") VALUES(" +
+//                + 0+", "+
+//                "'Test', 'test@test.test', '987654321', 'Testara', '0123T')");
     }
 
     @Override

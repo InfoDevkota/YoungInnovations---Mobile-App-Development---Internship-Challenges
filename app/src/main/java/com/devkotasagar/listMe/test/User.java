@@ -2,7 +2,7 @@ package com.devkotasagar.listMe.test;
 
 public class User {
     String name;
-    int id;
+    int id; //The ID from API, not db
     String email;
     String phone;
     Address address;
@@ -32,6 +32,14 @@ public class User {
         return phone;
     }
 
+    public String getStreet() {
+        return address.getStreet();
+    }
+
+    public String getZip() {
+        return address.getZipCode();
+    }
+
     String getAddress() {
         return address + "";
     }
@@ -48,6 +56,14 @@ public class User {
         @Override
         public String toString(){
             return street + ", " + zipCode;
+        }
+
+        public String getStreet() {
+            return street;
+        }
+
+        public String getZipCode() {
+            return zipCode;
         }
     }
 }
