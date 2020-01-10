@@ -40,9 +40,13 @@ public class UserListAdapter extends ArrayAdapter<User> {
         listItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO start user profile with his/her post
-                Toast aToast = Toast.makeText(context,"Clicked",Toast.LENGTH_LONG);
-                aToast.show();
+                Intent intent = new Intent(getContext(), UserActivity.class);
+                intent.putExtra("Name", currentUser.getName());
+                intent.putExtra("id", currentUser.getId());
+
+                context.startActivity(intent);
+//                Toast aToast = Toast.makeText(context,"Clicked",Toast.LENGTH_LONG);
+//                aToast.show();
             }
         });
 

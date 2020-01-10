@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 noDataView.setVisibility(View.VISIBLE);
                 return;
             }
-            int idColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_USER_IDD);
+            int idColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_USER_IDD);//the id from jsonData
             int nameColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_NAME);
             int emailColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_EMAIL);
             int phoneColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_phone);
