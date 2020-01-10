@@ -11,6 +11,7 @@
 
     </TextView>
     <TextView
+        android:padding="5dp"
         android:id="@+id/bodyTextView"
         android:text="Well, for that first to this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this."
         android:layout_width="match_parent"
