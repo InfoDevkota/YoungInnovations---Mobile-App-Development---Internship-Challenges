@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/titleTextView"
+        android:textStyle="bold"
+        android:text="How to apply for internship"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </TextView>
+    <TextView
+        android:id="@+id/bodyTextView"
+        android:text="Well, for that first to this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this. Then after that do this."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </TextView>
+
+
+</LinearLayout>

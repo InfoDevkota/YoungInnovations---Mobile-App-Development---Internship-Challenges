@@ -11,6 +11,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             if(count == 0){
                 //no data in the database show sync to server
                 //For now we have a test data so should have some data
-                noDataView.setVisibility(View.VISIBLE);
+                saveToDB(); //will try to fetch from server of no internet will display message and set no data
                 return;
             }
             int idColumnIndex = c.getColumnIndex(ListContract.UserEntry.COLUMN_USER_IDD);//the id from jsonData
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 UserAsyncTask task = new UserAsyncTask(USER_URL);
                 task.execute();
             } else {
+                noDataView.setVisibility(View.VISIBLE);
                 Toast aToast = Toast.makeText(this,"Internet Connection Required",Toast.LENGTH_LONG);
                 aToast.show();
             }
@@ -269,5 +272,21 @@ public class MainActivity extends AppCompatActivity {
             database.insert(ListContract.UserEntry.TABLE_NAME,null,values);
         }
         displayFromDb();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.refresh,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                saveToDB();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

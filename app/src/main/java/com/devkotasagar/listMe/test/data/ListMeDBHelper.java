@@ -22,6 +22,13 @@ public class ListMeDBHelper extends SQLiteOpenHelper {
             UserEntry.COLUMN_ADDRESS_STREET+ " TEXT, " +
             UserEntry.COLUMN_ADDRESS_ZIP+ " TEXT);";
 
+    private static final String CREATE_POST_TABLE = "" +
+            "CREATE TABLE " + ListContract.PostEntry.TABLE_NAME + "( " +
+            ListContract.PostEntry.COLUMN_POST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            ListContract.PostEntry.COLUMN_USER_ID + " INTEGER, " +
+            ListContract.PostEntry.COLUMN_BODY+ " TEXT, " +
+            ListContract.PostEntry.COLUMN_TITLE+ " TEXT);";
+
     public ListMeDBHelper(Context context) {
         super(context, DB_NAME, null, DATABASE_VERSION);
     }
@@ -29,6 +36,7 @@ public class ListMeDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
+        sqLiteDatabase.execSQL(CREATE_POST_TABLE);
 
         //TestForDisplayingUsers
 //        sqLiteDatabase.execSQL("INSERT INTO "+ UserEntry.TABLE_NAME + "(" +
@@ -41,6 +49,9 @@ public class ListMeDBHelper extends SQLiteOpenHelper {
 //                ") VALUES(" +
 //                + 0+", "+
 //                "'Test', 'test@test.test', '987654321', 'Testara', '0123T')");
+
+        //Test for Displaying post
+        //sqLiteDatabase.execSQL("INSERT INTO post(userId, title, body) values(1,'title', 'body')");
     }
 
     @Override

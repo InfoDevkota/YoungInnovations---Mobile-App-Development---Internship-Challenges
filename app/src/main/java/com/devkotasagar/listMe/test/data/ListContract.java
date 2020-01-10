@@ -16,4 +16,12 @@ public class ListContract {
         public static final String COLUMN_ADDRESS_STREET = "street";
         public static final String COLUMN_ADDRESS_ZIP = "zip";
     }
+
+    public static final class PostEntry implements BaseColumns {
+        public static final String TABLE_NAME = "post";
+        public static final String COLUMN_POST_ID = "id";
+        public static final String COLUMN_USER_ID = "userId";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_BODY = "body";
+    }
 }
